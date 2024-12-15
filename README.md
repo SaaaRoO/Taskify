@@ -30,24 +30,31 @@ Taskify is a simple task management application built with Flask, SQLAlchemy, an
    git clone https://github.com/SaaaRoO/Taskify.git
    
 2. Navigate to the project folder:
+   ```bash
    cd Taskify
 
 3. Create a virtual environment:
-   python -m venv venv
+ ```bash
+  python -m venv venv
 
 4. Activate the virtual environment:
+ ```bash
    **On Windows:
    venv\Scripts\activate
 
 5. Install the required dependencies:
+ ```bash
    pip install -r requirements.txt
 
    
 6.  Update the email configuration in config.py:
-
-**Make sure to set MAIL_USERNAME and MAIL_PASSWORD with your email account credentials.
+ ```bash
+    Make sure to set MAIL_USERNAME and MAIL_PASSWORD with your email account credentials.
 
 7. Run the application:
+ ```bash
    python app/app.py
+
 8. Access the Swagger API documentation at:
+ ```bash
    http://127.0.0.1:5000/swagger
