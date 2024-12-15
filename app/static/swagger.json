@@ -1,157 +1,311 @@
-{
-  "swagger": "2.0",
+{{
+  "openapi": "3.0.0",
   "info": {
     "title": "Task Management API",
-    "description": "API for managing tasks with user notifications and authentication.",
+    "description": "API for managing tasks, notifications, and authentication.",
     "version": "1.0.0"
   },
-  "host": "localhost:5000",
-  "basePath": "/api",
-  "schemes": ["http"],
   "paths": {
-    "/tasks": {
-      "get": {
-        "summary": "Get all tasks",
-        "description": "This endpoint returns a list of all tasks.",
-        "responses": {
-          "200": {
-            "description": "A list of tasks",
-            "schema": {
-              "type": "array",
-              "items": {
+    "/api/auth/register": {
+      "post": {
+        "summary": "Register a new user",
+        "description": "This endpoint creates a new user.",
+        "operationId": "registerUser",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
                 "type": "object",
                 "properties": {
-                  "task_id": { "type": "integer" },
-                  "task_name": { "type": "string" }
+                  "username": {
+                    "type": "string",
+                    "description": "The username of the new user"
+                  },
+                  "password": {
+                    "type": "string",
+                    "description": "The password for the new user"
+                  }
+                },
+                "required": ["username", "password"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "User created successfully"
+          },
+          "400": {
+            "description": "User already exists"
+          }
+        }
+      }
+    },
+    "/api/auth/login": {
+      "post": {
+        "summary": "Login an existing user",
+        "description": "This endpoint logs in an existing user and returns a JWT token.",
+        "operationId": "loginUser",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": {
+                    "type": "string",
+                    "description": "The username of the user"
+                  },
+                  "password": {
+                    "type": "string",
+                    "description": "The password of the user"
+                  }
+                },
+                "required": ["username", "password"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User logged in successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "access_token": {
+                      "type": "string",
+                      "description": "JWT access token"
+                    }
+                  }
                 }
               }
             }
-          }
-        }
-      },
-      "post": {
-        "summary": "Create a new task",
-        "description": "This endpoint allows you to create a new task.",
-        "parameters": [
-          {
-            "name": "task_name",
-            "in": "formData",
-            "type": "string",
-            "required": true,
-            "description": "The name of the task to be created."
-          }
-        ],
-        "responses": {
-          "201": {
-            "description": "Task successfully created",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "task_id": { "type": "integer" },
-                "task_name": { "type": "string" }
-              }
-            }
           },
-          "400": {
-            "description": "Bad request, task name is required."
-          }
-        }
-      }
-    },
-    "/tasks/{task_id}": {
-      "get": {
-        "summary": "Get a task by ID",
-        "description": "This endpoint returns a specific task based on the task ID.",
-        "parameters": [
-          {
-            "name": "task_id",
-            "in": "path",
-            "required": true,
-            "type": "integer",
-            "description": "The ID of the task to be fetched."
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "A single task object",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "task_id": { "type": "integer" },
-                "task_name": { "type": "string" }
-              }
-            }
-          },
-          "404": {
-            "description": "Task not found"
-          }
-        }
-      }
-    },
-    "/auth/login": {
-      "post": {
-        "summary": "Login",
-        "description": "This endpoint allows users to log in using their credentials (phone number and password).",
-        "parameters": [
-          {
-            "name": "phone_number",
-            "in": "formData",
-            "required": true,
-            "type": "string",
-            "description": "The phone number of the user."
-          },
-          {
-            "name": "password",
-            "in": "formData",
-            "required": true,
-            "type": "string",
-            "description": "The password of the user."
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful login",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "access_token": { "type": "string" }
-              }
-            }
-          },
-          "400": {
+          "401": {
             "description": "Invalid credentials"
           }
         }
       }
     },
-    "/auth/register": {
+    "/api/notify/email": {
       "post": {
-        "summary": "Register",
-        "description": "This endpoint allows users to register with their phone number and password.",
-        "parameters": [
+        "summary": "Send an email notification",
+        "description": "This endpoint sends an email notification.",
+        "operationId": "sendNotification",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "subject": {
+                    "type": "string",
+                    "description": "Subject of the email"
+                  },
+                  "recipients": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "description": "Recipient's email address"
+                    }
+                  },
+                  "body": {
+                    "type": "string",
+                    "description": "Body content of the email"
+                  }
+                },
+                "required": ["subject", "recipients", "body"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Email sent successfully"
+          }
+        }
+      }
+    },
+    "/api/tasks": {
+      "get": {
+        "summary": "Get all tasks for the logged-in user",
+        "description": "This endpoint retrieves all tasks for the currently authenticated user.",
+        "operationId": "getTasks",
+        "security": [
           {
-            "name": "phone_number",
-            "in": "formData",
-            "required": true,
-            "type": "string",
-            "description": "The phone number of the user."
-          },
-          {
-            "name": "password",
-            "in": "formData",
-            "required": true,
-            "type": "string",
-            "description": "The password of the user."
+            "BearerAuth": []
           }
         ],
         "responses": {
+          "200": {
+            "description": "A list of tasks",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "integer"
+                      },
+                      "title": {
+                        "type": "string"
+                      },
+                      "completed": {
+                        "type": "boolean"
+                      },
+                      "user_id": {
+                        "type": "integer",
+                        "description": "ID of the user who created the task"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized, authentication required"
+          }
+        }
+      },
+      "post": {
+        "summary": "Add a new task",
+        "description": "This endpoint adds a new task for the logged-in user.",
+        "operationId": "addTask",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "description": "Title of the new task"
+                  }
+                },
+                "required": ["title"]
+              }
+            }
+          }
+        },
+        "responses": {
           "201": {
-            "description": "User successfully registered"
+            "description": "Task added successfully"
           },
           "400": {
             "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized, authentication required"
           }
         }
+      }
+    },
+    "/api/tasks/{id}": {
+      "put": {
+        "summary": "Update an existing task",
+        "description": "This endpoint updates an existing task for the logged-in user.",
+        "operationId": "updateTask",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID of the task to update",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "completed": {
+                    "type": "boolean",
+                    "description": "Status of the task"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Task updated successfully"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Task not found"
+          },
+          "401": {
+            "description": "Unauthorized, authentication required"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a task",
+        "description": "This endpoint deletes a task by its ID.",
+        "operationId": "deleteTask",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID of the task to delete",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Task deleted successfully"
+          },
+          "404": {
+            "description": "Task not found"
+          },
+          "401": {
+            "description": "Unauthorized, authentication required"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
       }
     }
   }
